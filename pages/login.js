@@ -1,12 +1,12 @@
 import useGoogleOneTap from '../components/hooks/useGoogleOneTap'
-import { signIn, getSession, signOut } from 'next-auth/react'
+import { signIn, getSession } from 'next-auth/react'
 import { useTheme, Button, Box, Typography, Container, Avatar } from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Head from 'next/head'
 
-export default function Login ({ session }) {
+export default function Login () {
   const {
-    isLoading, showFallback, setShowFallback
+    isLoading, showFallback
   } = useGoogleOneTap()
   const theme = useTheme()
 
@@ -63,27 +63,8 @@ export default function Login ({ session }) {
             </Button>
           )}
           {isLoading && <h5>loading..</h5>}
-          {session?.user && (
-            <button
-              disabled={isLoading}
-              onClick={() => {
-                signOut()
-                setShowFallback(false)
-              }}
-            >
-              Log out & disable auto-login
-            </button>
-          )}
         </Box>
       </Container>
     </>
   )
-}
-
-export async function getServerSideProps (ctx) {
-  return {
-    props: {
-      session: await getSession(ctx)
-    }
-  }
 }
