@@ -13,7 +13,9 @@ import {
 import { NextLinkComposed } from '../components/NextMUILink'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
-import NewMealDialog from '../components/NewMealDialog'
+import dynamic from 'next/dynamic'
+
+const NewMealDialog = dynamic(() => import('../components/NewMealDialog'))
 
 const FooterNav = () => {
   const router = useRouter()
