@@ -161,7 +161,7 @@ export const getServerSideProps = async (ctx) => {
   }
   const queryClient = new QueryClient()
 
-  await queryClient.prefetchQuery('calendar_meals', async () => {
+  await queryClient.prefetchQuery('meals', async () => {
     return prisma.meal.findMany({
       where: {
         AND: [

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Typography, Box, useTheme, useMediaQuery } from '@mui/material'
 import { endOfDay, startOfDay, format } from 'date-fns'
 import { getSession } from 'next-auth/react'
