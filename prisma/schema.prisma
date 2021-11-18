@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now()) @map(name: "created_at")
+  updatedAt DateTime? @updatedAt @map(name: "updated_at")
+  deletedAt DateTime? @updatedAt @map(name: "deleted_at")
+  content   String    @db.Text
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  meal      Meal      @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  mealId    String    @map("meal_id")
+  userId    String    @map("user_id")
+
+  @@map(name: "comments")
+}
+
+model Meal {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now()) @map(name: "created_at")
+  updatedAt   DateTime? @updatedAt @map(name: "updated_at")
+  deletedAt   DateTime? @updatedAt @map(name: "deleted_at")
+  sugar       Int
+  food        String
+  details     String?
+  legumes     Boolean
+  fruitsNuts  Boolean   @map("fruits_nuts")
+  healthyFats Boolean   @map("healthy_fats")
+  dairy       Boolean
+  meat        Boolean
+  wholeGrains Boolean   @map("whole_grains")
+  vegetables  Boolean
+  alcohol     Boolean
+  fishSeafood Boolean   @map("fish_seafood")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String    @map("user_id")
+  comments    Comment[]
+
+  @@map(name: "meals")
+}
+
+model Account {
+  id                 String    @id @default(cuid())
+  createdAt          DateTime  @default(now()) @map(name: "created_at")
+  updatedAt          DateTime? @updatedAt @map(name: "updated_at")
+  deletedAt          DateTime? @updatedAt @map(name: "deleted_at")
+  userId             String    @map("user_id")
+  type               String
+  provider           String
+  providerAccountId  String    @map("provider_account_id")
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?   @db.Text
+  session_state      String?
+  oauth_token_secret String?
+  oauth_token        String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map(name: "accounts")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  doctorId      String?   @map("doctor_id")
+  email         String?   @unique
+  emailVerified Boolean?  @map(name: "email_verified")
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime? @updatedAt @map(name: "updated_at")
+  deletedAt     DateTime? @updatedAt @map(name: "deleted_at")
+  doctor        User?     @relation("DoctorPatientMap", fields: [doctorId], references: [id])
+  patients      User[]    @relation("DoctorPatientMap")
+  meals         Meal[]
+  name          String
+  image         String?
+  accounts      Account[]
+  comments      Comment[]
+
+  @@map(name: "users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map(name: "verification_tokens")
+}
