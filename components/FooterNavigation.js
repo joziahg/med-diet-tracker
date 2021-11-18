@@ -33,7 +33,7 @@ const FooterNav = () => {
           onKeyDown={() => setDrawerOpen(false)}
         >
           <List>
-            <ListItem button component={NextLinkComposed} to='/home' selected={router.pathname === '/home'}>
+            <ListItem button component={NextLinkComposed} to='/' selected={router.pathname === '/'}>
               <ListItemIcon>
                 <HomeIcon />
               </ListItemIcon>

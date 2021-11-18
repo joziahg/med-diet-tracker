@@ -5,9 +5,10 @@ import { OAuth2Client } from 'google-auth-library'
 import prisma from '../../../lib/prisma'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 
-const googleAuthClient = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_ID)
+const googleAuthClient = new OAuth2Client(process.env.GOOGLE_ID)
 
 const adapter = PrismaAdapter(prisma)
+
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
 export default NextAuth({
@@ -74,17 +75,17 @@ export default NextAuth({
         // Let's also retrieve any account for the user from the DB, if any
         let account
         if (user) {
-          account = await adapter.getUserByAccount({ provider: 'google', providerAccountId: sub })
+          account = await adapter.getUserByProviderAccountId({ providerId: 'google', providerAccountId: sub })
         }
         // In case the account is not yet present on our DB, we want to create one and link to the user
         if (!account && user) {
           await adapter.linkAccount({
             userId: user.id,
-            provider: 'google',
+            providerId: 'google',
             providerAccountId: sub,
             accessToken: null,
             accessTokenExpires: null,
-            refresh_token: null
+            refreshToken: null
           })
         }
         // We can finally returned the retrieved or created user

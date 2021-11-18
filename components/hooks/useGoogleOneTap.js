@@ -19,7 +19,7 @@ const useOneTapSignin = () => {
             // Here we call our Provider with the token provided by google
             await signIn('googleonetap', {
               credential: response.credential,
-              callbackUrl: '/home'
+              callbackUrl: '/'
             })
             setIsLoading(false)
           },
