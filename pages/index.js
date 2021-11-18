@@ -15,7 +15,6 @@ const PatientHome = ({ session }) => {
       periodEnd: endOfDay(new Date()).getTime()
     }
   }).then(result => result.data))
-  console.log(meals)
   return (
     <Box
       sx={{

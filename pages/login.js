@@ -1,5 +1,5 @@
 import useGoogleOneTap from '../components/hooks/useGoogleOneTap'
-import { signIn, getSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 import { useTheme, Button, Box, Typography, Container, Avatar } from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Head from 'next/head'

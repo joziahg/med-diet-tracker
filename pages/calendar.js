@@ -90,7 +90,6 @@ const MyCalendar = () => {
     }
   }).then(result => result.data))
   const theme = useTheme()
-  console.log(theme)
   if (isError) return 'oops something broke'
   return (
     <Box sx={{ height: '100%' }}>

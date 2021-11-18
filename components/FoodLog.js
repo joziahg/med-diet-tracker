@@ -37,11 +37,9 @@ export default function FoodLog ({ children, meal }) {
   })
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
   useEffect(() => {
-    console.log('number 1')
     setTodaysPointsHit(getTodaysPointsHit([meal]))
   }, [meal, setTodaysPointsHit])
   useEffect(() => {
-    console.log('number 2')
     let totalPts = 0
     Object.entries(todaysPointsHit).forEach(
       (point) => point[1] === true && totalPts++
