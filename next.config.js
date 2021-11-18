@@ -1,14 +1,12 @@
 const { withSuperjson } = require('next-superjson')
 const { withPlugins } = require('next-compose-plugins')
-
-// next.config.js
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE
-})
+const withBundleAnalyzer = require('@next/bundle-analyzer')
 
 module.exports = withPlugins([
-  withBundleAnalyzer,
-  withSuperjson
+  withSuperjson(),
+  [withBundleAnalyzer, {
+    enabled: process.env.ANALYZE === 'true'
+  }]
 ], {
   reactStrictMode: true
 })
