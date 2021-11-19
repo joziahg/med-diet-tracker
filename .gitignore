@@ -34,6 +34,7 @@ yarn-error.log*
 
 # vercel
 .vercel
+_static
 
 
 # Sentry

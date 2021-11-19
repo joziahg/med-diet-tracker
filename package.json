@@ -3,10 +3,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "do-build": "next build",
+    "do-build": "npm run do:generate && next build",
     "do-start": "next start -H 0.0.0.0 -p ${PORT:-8080}",
-    "vercel-build": "npm run prisma:generate && next build",
-    "prisma:generate": "PRISMA_CLIENT_ENGINE_TYPE='dataproxy' prisma generate",
+    "vercel-build": "npm run vercel:generate && next build",
+    "do:generate": "prisma generate",
+    "vercel:generate": "PRISMA_CLIENT_ENGINE_TYPE='dataproxy' prisma generate",
     "lint": "next lint"
   },
   "dependencies": {
