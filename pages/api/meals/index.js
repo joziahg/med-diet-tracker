@@ -1,95 +1,93 @@
 import { getSession } from 'next-auth/react'
 import prisma from '../../../lib/prisma'
-import { withSentry } from '@sentry/nextjs'
 
-async function handler (req, res) {
+const handler = async (req, res) => {
   const session = await getSession({ req })
-  if (!session?.user) {
+  if (!session) {
     res.status(401)
-  } else {
-    switch (req.method) {
-      case 'POST': {
-        const {
-          food, sugar, vegetables, healthyFats, fruitsNuts,
-          fishSeafood, legumes, dairy, wholeGrains, meat, alcohol
-        } = req.body
-        let result
-        try {
-          result = await prisma.meal.create({
-            data: {
-              food,
-              sugar: parseInt(sugar),
-              vegetables,
-              healthyFats,
-              fruitsNuts,
-              fishSeafood,
-              legumes,
-              dairy,
-              wholeGrains,
-              meat,
-              alcohol,
-              user: {
-                connect: { id: session.user.id }
+  } else if (req.method === 'GET') {
+    const { periodStart, periodEnd } = req.query
+    try {
+      const users = await prisma.meal.findMany({
+        where: {
+          AND: [
+            {
+              createdAt: {
+                gte: periodStart ? new Date(parseInt(periodStart)) : new Date()
               }
-            }
-          })
-        } catch (err) {
-          res.status(400).json(err)
-          break
-        }
-        res.json(result)
-        break
-      }
-      case 'GET': {
-        const { periodStart, periodEnd } = req.query
-        const meals = await prisma.meal.findMany({
-          where: {
-            AND: [
-              {
-                createdAt: {
-                  gte: periodStart ? new Date(parseInt(periodStart)) : new Date()
-                }
-              },
-              {
-                createdAt: {
-                  lte: periodEnd ? new Date(parseInt(periodEnd)) : new Date()
-                }
-              },
-              { userId: session.user.id }
-            ]
-          },
-          include: {
-            comments: {
-              include: {
-                user: true
+            },
+            {
+              createdAt: {
+                lte: periodEnd ? new Date(parseInt(periodEnd)) : new Date()
               }
+            },
+            { userId: session.user.id }
+          ]
+        },
+        include: {
+          comments: {
+            include: {
+              user: true
             }
           }
-        })
-        res.json(meals)
-        break
-      }
-      case 'DELETE': {
-        const { mealId } = req.body
-        const mealInQuestion = await prisma.meal.findUnique({
-          where: {
-            id: mealId
-          }
-        })
-        if (mealInQuestion.userId !== session.user.id) {
-          res.send(401).json({ err: 'Not your meal to delete' })
-          break
         }
-        const meals = await prisma.meal.delete({
-          where: {
-            id: mealId
-          }
-        })
-        res.json(meals)
-        break
-      }
+      })
+      res.status(200).json(users)
+    } catch (error) {
+      console.error(error)
+      res.status(500).json(error)
     }
+  } else if (req.method === 'POST') {
+    const {
+      food, sugar, vegetables, healthyFats, fruitsNuts,
+      fishSeafood, legumes, dairy, wholeGrains, meat, alcohol
+    } = req.body
+    try {
+      const createdPost = await prisma.post.create({
+        data: {
+          food,
+          sugar: parseInt(sugar),
+          vegetables,
+          healthyFats,
+          fruitsNuts,
+          fishSeafood,
+          legumes,
+          dairy,
+          wholeGrains,
+          meat,
+          alcohol,
+          user: {
+            connect: { id: session.user.id }
+          }
+        }
+      })
+      res.status(200).json(createdPost)
+    } catch (e) {
+      console.error(e)
+      return res.status(500)
+    }
+  } else if (req.method === 'DELETE') {
+    try {
+      const { mealId } = req.body
+      const mealInQuestion = await prisma.meal.findUnique({
+        where: {
+          id: mealId
+        }
+      })
+      if (mealInQuestion.userId !== session.user.id) {
+        return res.status(401).json({ err: 'Not your meal to delete' })
+      }
+      await prisma.meal.delete({
+        where: {
+          id: mealId
+        }
+      })
+    } catch (e) {
+      return res.status(500)
+    }
+  } else {
+    res.status(404)
   }
 }
 
-export default withSentry(handler)
+export default handler

@@ -5,7 +5,7 @@ import { ButtonGroup, Button, Box, useTheme, Fade, CircularProgress } from '@mui
 import { useState } from 'react'
 import USLocale from 'date-fns/locale/en-US'
 import axios from 'axios'
-import { useQuery, QueryClient, dehydrate } from 'react-query'
+import { useQuery } from 'react-query'
 import prisma from '../lib/prisma'
 import { getSession } from 'next-auth/react'
 import FoodLog from '../components/FoodLog'
@@ -81,14 +81,14 @@ function Event ({ event }) {
   )
 }
 
-const MyCalendar = () => {
+const MyCalendar = ({ initalMeals }) => {
   const [dateRange, setDateRange] = useState({ start: startOfMonth(new Date()), end: endOfMonth(new Date()) })
   const { data: meals, isError, isLoading } = useQuery(['meals', dateRange], () => axios.get('/api/meals', {
     params: {
       periodStart: dateRange.start.getTime(),
       periodEnd: dateRange.end.getTime()
     }
-  }).then(result => result.data))
+  }).then(result => result.data), { initialData: initalMeals })
   const theme = useTheme()
   if (isError) return 'oops something broke'
   return (
@@ -158,35 +158,31 @@ export const getServerSideProps = async (ctx) => {
       }
     }
   }
-  const queryClient = new QueryClient()
-
-  await queryClient.prefetchQuery('meals', async () => {
-    return prisma.meal.findMany({
-      where: {
-        AND: [
-          {
-            createdAt: {
-              gte: startOfMonth(new Date())
-            }
-          },
-          {
-            createdAt: {
-              lte: endOfMonth(new Date())
-            }
-          },
-          { userId: session.user.id }
-        ]
-      },
-      include: {
-        comments: {
-          include: {
-            user: true
+  const meals = await prisma.meal.findMany({
+    where: {
+      AND: [
+        {
+          createdAt: {
+            gte: startOfMonth(new Date())
           }
+        },
+        {
+          createdAt: {
+            lte: endOfMonth(new Date())
+          }
+        },
+        { userId: session.user.id }
+      ]
+    },
+    include: {
+      comments: {
+        include: {
+          user: true
         }
       }
-    })
+    }
   })
-  return { props: { dehydratedState: dehydrate(queryClient), session } }
+  return { props: { meals, session } }
 }
 
 export default MyCalendar
