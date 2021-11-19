@@ -15,7 +15,8 @@ const moduleExports = withPlugins([
     enabled: process.env.ANALYZE === 'true'
   }]
 ], {
-  reactStrictMode: true
+  reactStrictMode: true,
+  outputFileTracing: false
 })
 
 const sentryWebpackPluginOptions = {
