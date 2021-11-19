@@ -1,7 +1,8 @@
 import { getSession } from 'next-auth/react'
 import prisma from '../../../lib/prisma'
+import { withSentry } from '@sentry/nextjs'
 
-export default async function handler (req, res) {
+async function handler (req, res) {
   const session = await getSession({ req })
   if (!session?.user) {
     return res.status(401)
@@ -86,3 +87,5 @@ export default async function handler (req, res) {
     }
   }
 }
+
+export default withSentry(handler)
