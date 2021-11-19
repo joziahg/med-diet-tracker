@@ -69,4 +69,6 @@ export const getServerSideProps = async (ctx) => {
   return { props: { dehydratedState: dehydrate(queryClient), session } }
 }
 
+WeekView.auth = true
+
 export default WeekView

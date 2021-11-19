@@ -39,7 +39,7 @@ export default NextAuth({
           // The token received from the interface
           idToken: token,
           // This is the google ID of your application
-          audience: process.env.NEXT_PUBLIC_GOOGLE_ID
+          audience: process.env.GOOGLE_ID
         })
         const payload = ticket.getPayload() // This is the user
 
@@ -75,7 +75,7 @@ export default NextAuth({
         // Let's also retrieve any account for the user from the DB, if any
         let account
         if (user) {
-          account = await adapter.getUserByProviderAccountId({ providerId: 'google', providerAccountId: sub })
+          account = await adapter.getUserByAccount({ provider: 'google', providerAccountId: sub })
         }
         // In case the account is not yet present on our DB, we want to create one and link to the user
         if (!account && user) {
