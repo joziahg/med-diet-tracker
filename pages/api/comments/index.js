@@ -1,4 +1,3 @@
-import { withSentry } from '@sentry/nextjs'
 import { getSession } from 'next-auth/react'
 import prisma from '../../../lib/prisma'
 
@@ -32,4 +31,4 @@ async function handler (req, res) {
   }
 }
 
-export default withSentry(handler)
+export default handler
