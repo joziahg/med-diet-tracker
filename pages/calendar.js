@@ -6,8 +6,6 @@ import { useState } from 'react'
 import USLocale from 'date-fns/locale/en-US'
 import axios from 'axios'
 import { useQuery } from 'react-query'
-
-import { getSession } from 'next-auth/react'
 import FoodLog from '../components/FoodLog'
 
 const navigate = {
@@ -146,19 +144,6 @@ const MyCalendar = () => {
       />
     </Box>
   )
-}
-
-export const getServerSideProps = async (ctx) => {
-  const session = await getSession(ctx)
-  if (!session?.user) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false
-      }
-    }
-  }
-  return { props: { session } }
 }
 
 export default MyCalendar
