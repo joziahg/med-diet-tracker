@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start -H 0.0.0.0 -p ${PORT:-8080}",
+    "do-build": "next build && next export -o _static",
+    "do-start": "next start -H 0.0.0.0 -p ${PORT:-8080}",
     "vercel-build": "npm run prisma:generate && next build",
     "prisma:generate": "PRISMA_CLIENT_ENGINE_TYPE='dataproxy' prisma generate",
     "lint": "next lint"
